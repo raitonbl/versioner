@@ -11,19 +11,15 @@ jobs:
           go-version: '1.16.5' # The Go version to download (if necessary) and use.
       - run: go mod tidy
       - run: go build
-      - run: ls -l
-      - uses: shallwefootball/s3-upload-action@master
-        name: Upload S3
-        id: S3
+
+      - name: Upload to S3 artifact folder
+        uses: medlypharmacy/s3-artifacts-action@master
         with:
-          aws_key_id: ${{ secrets.AWS_KEY_ID }}
-          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY}}
-          aws_bucket: ${{ secrets.AWS_BUCKET }}
-          source_dir: './versioner'
-      - name: Update deployment status (success)
-        if: success()
-        uses: chrnorm/deployment-status@releases/v1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          target_url: https://${{ secrets.AWS_BUCKET }}.s3.${{ secrets.AWS_REGION }}.amazonaws.com/repositories/binaries/versioner/1.0.0.${{ github.run_id }}.${{ github.run_number }}/application
-          state: 'success'
+          aws_access_key_id: ${{ secrets.AWS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_KEY_ID }}
+          aws_s3_bucket_name: ${{ secrets.AWS_BUCKET }}
+          aws_s3_region: ${{ secrets.AWS_REGION }}
+          source_path: './versioner'
+          destination_path: "/repositories/binaries/versioner/1.0.0.${{ github.run_id }}.${{ github.run_number }}/application"
+          exclude_repo_from_destination_path: true
+          resource_type: "FILE"
