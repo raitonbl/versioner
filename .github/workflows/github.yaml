@@ -3,12 +3,12 @@ on: push
 
 jobs:
   release-linux-386:
-    name: release linux/386
+    name: build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
       - uses: actions/setup-go@v1
         with:
           go-version: '1.16.5' # The Go version to download (if necessary) and use.
-      - run: go run hello.go
       - run: go mod tidy
+      - run: go build
