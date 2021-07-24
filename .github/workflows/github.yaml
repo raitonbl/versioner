@@ -16,7 +16,7 @@ jobs:
         uses: medlypharmacy/s3-artifacts-action@master
         with:
           aws_access_key_id: ${{ secrets.AWS_KEY_ID }}
-          aws_secret_access_key: ${{ secrets.AWS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws_s3_bucket_name: ${{ secrets.AWS_BUCKET }}
           aws_region: ${{ secrets.AWS_REGION }}
           source_path: './versioner'
