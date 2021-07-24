@@ -11,8 +11,6 @@ jobs:
           go-version: '1.16.5' # The Go version to download (if necessary) and use.
       - run: go mod tidy
       - run: go build
-      - run: mkdir target
-      - run: mv versioner target/
       - uses: shallwefootball/s3-upload-action@master
         name: Upload S3
         id: S3
@@ -20,7 +18,7 @@ jobs:
           aws_key_id: ${{ secrets.AWS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY}}
           aws_bucket: ${{ secrets.AWS_BUCKET }}
-          source_dir: './target'
+          source_dir: './versioner'
       - name: Update deployment status (success)
         if: success()
         uses: chrnorm/deployment-status@releases/v1
