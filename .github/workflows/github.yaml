@@ -18,7 +18,7 @@ jobs:
           aws_access_key_id: ${{ secrets.AWS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_KEY_ID }}
           aws_s3_bucket_name: ${{ secrets.AWS_BUCKET }}
-          aws_s3_region: ${{ secrets.AWS_REGION }}
+          aws_region: ${{ secrets.AWS_REGION }}
           source_path: './versioner'
           destination_path: "/repositories/binaries/versioner/1.0.0.${{ github.run_id }}.${{ github.run_number }}/application"
           exclude_repo_from_destination_path: true
