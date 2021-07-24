@@ -1,12 +1,11 @@
-name: Publish into S3
+name: Publish release into S3
 on:
+  pull_request:
+    branches:
+      - releases/**
   push:
     branches:
-      - '*'
-      - '**'
-      - '!releases/*'
-      - '!releases/*/*'
-      - '!releases/**'
+      - releases/**
 
 jobs:
   deploy:
@@ -27,6 +26,17 @@ jobs:
           aws_s3_bucket_name: ${{ secrets.AWS_BUCKET }}
           aws_region: ${{ secrets.AWS_REGION }}
           source_path: './versioner'
-          destination_path: "/repositories/binaries/versioner/1.0.0.${{ github.run_id }}.${{ github.run_number }}"
+          destination_path: "/repositories/binaries/versioner/1.0.0-RELEASE"
+          exclude_repo_from_destination_path: true
+          resource_type: "FILE"
+      - name: Upload latest to S3
+        uses: medlypharmacy/s3-artifacts-action@master
+        with:
+          aws_access_key_id: ${{ secrets.AWS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_s3_bucket_name: ${{ secrets.AWS_BUCKET }}
+          aws_region: ${{ secrets.AWS_REGION }}
+          source_path: './versioner'
+          destination_path: "/repositories/binaries/versioner/latest"
           exclude_repo_from_destination_path: true
           resource_type: "FILE"

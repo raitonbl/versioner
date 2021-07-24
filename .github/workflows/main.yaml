@@ -1,12 +1,7 @@
-name: Publish into S3
+name: Publish main into S3
 on:
-  push:
-    branches:
-      - '*'
-      - '**'
-      - '!releases/*'
-      - '!releases/*/*'
-      - '!releases/**'
+  pull_request:
+    branches: main
 
 jobs:
   deploy:
