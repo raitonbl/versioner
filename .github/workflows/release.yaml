@@ -1,6 +1,10 @@
+name: GENERATE RELEASE
 on:
-  create:
-    tags:
+  push:
+    branches:
+      - '*'
+  pull_request:
+    branches:
       - '*'
 
 jobs:
@@ -45,7 +49,7 @@ jobs:
 
   publish:
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
+    if: github.event_name == 'push' && contains(github.ref, 'refs/tags/v')
     needs:
       - build
     env:
