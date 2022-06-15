@@ -1,11 +1,7 @@
 on:
-  push:
-    tags-ignore:
-      - '**'
-  pull_request:
-    branches:
+  create:
+    tags:
       - '*'
-      - '**'
 
 jobs:
   unit_testing:
@@ -45,7 +41,7 @@ jobs:
         with:
           name: dist
           path: ./dist
-          retention-days: 1
+          retention-days: 0
 
   publish:
     runs-on: ubuntu-latest
