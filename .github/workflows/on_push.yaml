@@ -24,6 +24,8 @@ jobs:
         name: Execute
   build:
     runs-on: ubuntu-latest
+    needs:
+      - unit_testing
     steps:
       - uses: actions/checkout@v3
         name: Git Checkout
