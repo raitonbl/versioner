@@ -1,18 +1,13 @@
-package main
+package options
 
 import (
 	"fmt"
+	"github.com/raitonbl/versioner/pkg"
 	"github.com/thatisuday/commando"
 	"os"
 )
 
-type Inspector interface {
-	IsSupported(value string) bool
-	ReadVersion(value string) (string, error)
-	GetVersionFile() string
-}
-
-func ReadVersion(array []Inspector) func(map[string]commando.ArgValue, map[string]commando.FlagValue) {
+func ReadVersion(cache map[string]pkg.Reader) func(map[string]commando.ArgValue, map[string]commando.FlagValue) {
 	return func(args map[string]commando.ArgValue, flags map[string]commando.FlagValue) {
 
 		pathToFile := args["file"].Value
@@ -23,15 +18,13 @@ func ReadVersion(array []Inspector) func(map[string]commando.ArgValue, map[strin
 			os.Exit(400)
 		}
 
-		var inspector Inspector = nil
+		var inspector pkg.Reader = nil
 
-		for index := 0; index < len(array); index++ {
-			current := array[index]
-
+		for _, current := range cache {
 			if current.IsSupported(fileType) {
 				inspector = current
+				break
 			}
-
 		}
 
 		if inspector == nil {

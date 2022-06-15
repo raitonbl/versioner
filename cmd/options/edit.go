@@ -1,18 +1,13 @@
-package main
+package options
 
 import (
 	"fmt"
+	"github.com/raitonbl/versioner/pkg"
 	"github.com/thatisuday/commando"
 	"os"
 )
 
-type Editor interface {
-	GetVersionFile() string
-	IsSupported(value string) bool
-	EditVersion(value string, newValue string) error
-}
-
-func OnWrite(array []Editor) func(map[string]commando.ArgValue, map[string]commando.FlagValue) {
+func EditVersion(cache map[string]pkg.Editor) func(map[string]commando.ArgValue, map[string]commando.FlagValue) {
 	return func(args map[string]commando.ArgValue, flags map[string]commando.FlagValue) {
 
 		pathToFile := args["file"].Value
@@ -24,15 +19,13 @@ func OnWrite(array []Editor) func(map[string]commando.ArgValue, map[string]comma
 			os.Exit(400)
 		}
 
-		var editor Editor = nil
+		var editor pkg.Editor = nil
 
-		for index := 0; index < len(array); index++ {
-			current := array[index]
-
+		for _, current := range cache {
 			if current.IsSupported(fileType) {
 				editor = current
+				break
 			}
-
 		}
 
 		if editor == nil {

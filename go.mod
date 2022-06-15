@@ -1,11 +1,14 @@
 module github.com/raitonbl/versioner
 
+replace github.com/raitonbl/versioner => ./
+
 go 1.18
 
 require (
 	github.com/antchfx/xmlquery v1.3.6
 	github.com/creekorful/mvnparser v1.4.0
 	github.com/thatisuday/commando v1.0.4
+	github.com/thoas/go-funk v0.9.2
 )
 
 require (
