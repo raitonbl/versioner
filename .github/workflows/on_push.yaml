@@ -39,11 +39,15 @@ jobs:
         name: Download dependencies
       - run:  go build
         name: Build application
+      - name: Create dist directory
+        run: mkdir dist
+      - name: Move application into dist directory
+        run:  sudo mv versioner dist/versioner
       - name: Upload application into Github artifacts
         uses: actions/upload-artifact@v2
         with:
           name: dist
-          path: ./versioner
+          path: ./dist
 
   publish:
     runs-on: ubuntu-latest
@@ -56,14 +60,14 @@ jobs:
         name: Download application from artifacts
         with:
           name: dist
-          path: versioner
+          path: dist
       - name: Upload application into S3
         uses: medlypharmacy/s3-artifacts-action@master
         with:
           resource_type: "FILE"
-          source_path: './versioner'
+          source_path: './dist/versioner'
           exclude_repo_from_destination_path: true
-          destination_path: "/public/versioner/2.0.0.${{ github.run_id }}.${{ github.run_number }}-RELEASE"
+          destination_path: "/public/versioner/2.0.0-RELEASE"
           aws_region: ${{ secrets.AWS_REGION }}
           aws_access_key_id: ${{ secrets.AWS_KEY_ID }}
           aws_s3_bucket_name: ${{ secrets.AWS_BUCKET }}
