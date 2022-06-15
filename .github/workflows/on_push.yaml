@@ -67,7 +67,18 @@ jobs:
           resource_type: "FILE"
           source_path: './dist/versioner'
           exclude_repo_from_destination_path: true
-          destination_path: "/public/versioner/2.0.0-RELEASE"
+          destination_path: "/public/versioner/2.0.0-RELEASE/versioner"
+          aws_region: ${{ secrets.AWS_REGION }}
+          aws_access_key_id: ${{ secrets.AWS_KEY_ID }}
+          aws_s3_bucket_name: ${{ secrets.AWS_BUCKET }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      - name: Upload README.md into S3
+        uses: medlypharmacy/s3-artifacts-action@master
+        with:
+          resource_type: "FILE"
+          source_path: './README.md'
+          exclude_repo_from_destination_path: true
+          destination_path: "/public/versioner/2.0.0-RELEASE/README.md"
           aws_region: ${{ secrets.AWS_REGION }}
           aws_access_key_id: ${{ secrets.AWS_KEY_ID }}
           aws_s3_bucket_name: ${{ secrets.AWS_BUCKET }}
