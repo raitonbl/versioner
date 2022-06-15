@@ -1,0 +1,42 @@
+on:
+  push:
+    branches:
+      - '*'
+      - '**'
+      - '!releases/*'
+      - '!releases/*/*'
+      - '!releases/**'
+      - '!main'
+      - '!develop'
+jobs:
+  unit_testing:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        name: Git Checkout
+      - uses: actions/setup-go@v3
+        name: Initialize Development Environment
+        with:
+          go-version: '1.18.3' # The Go version to download (if necessary) and use.
+      - run:  go mod tidy
+        name: Download dependencies
+      - run:  go test ./...
+        name: Execute
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        name: Git Checkout
+      - uses: actions/setup-go@v3
+        name: Initialize Development Environment
+        with:
+          go-version: '1.18.3' # The Go version to download (if necessary) and use.
+      - run:  go mod tidy
+        name: Download dependencies
+      - run:  go build
+        name: Build application
+      - name: Upload application into Github artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: dist
+          path: ./versioner

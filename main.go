@@ -6,7 +6,7 @@ import (
 
 func main() {
 
-	commando.SetExecutableName("versioner").SetVersion("1.0.0").
+	commando.SetExecutableName("versioner").SetVersion("2.0.0").
 		SetDescription("allows to read or modify version on source code")
 
 	commando.Register("read").SetShortDescription("reads version from version file").
