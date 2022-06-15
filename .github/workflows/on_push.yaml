@@ -2,10 +2,7 @@ on:
   push:
     tags-ignore:
       - '**'
-  pull_request:
-    branches:
-      - '*'
-      - '**'
+
 
 jobs:
   unit_testing:
