@@ -19,8 +19,14 @@ jobs:
           go-version: '1.18.3' # The Go version to download (if necessary) and use.
       - run:  go mod tidy
         name: Download dependencies
-      - run:  go test ./...
+      - run:  go test -coverprofile coverage.out ./...
         name: Execute
+      - name: Upload Code coverage report into Github artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: coverage.out
+          path: coverage.out
+          retention-days: 0
 
   build:
     runs-on: ubuntu-latest

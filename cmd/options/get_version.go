@@ -10,7 +10,7 @@ import (
 	"os"
 )
 
-func GetVersion(s map[string]pkg.Manager, opts map[string]interface{}) func(map[string]commando.ArgValue, map[string]commando.FlagValue) {
+func GetVersion(s map[string]pkg.Manager, _ map[string]interface{}) func(map[string]commando.ArgValue, map[string]commando.FlagValue) {
 	return func(args map[string]commando.ArgValue, flags map[string]commando.FlagValue) {
 
 		file := args["file"].Value

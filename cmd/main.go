@@ -42,15 +42,30 @@ func main() {
 		AddArgument("runtime", fmt.Sprintf("indicates the type of object that will be updated.\noptions: %s", managerOpts), "").
 		AddArgument("object", fmt.Sprintf("indicates the type of object that will be updated.\noptions: %s", typeOpts), "").
 		AddArgument("file", "indicates the version file path", "").
-		SetAction(options.SetVersion(managers, map[string]interface{}{
-			"types":    typeOpts,
-			"managers": managerOpts,
+		SetAction(options.SetVersion(managers, false, map[string]interface{}{
+			"types":        typeOpts,
+			"managers":     managerOpts,
+			"environments": gitEnvironments,
 		}))
 
 	commando.Register("stamp").SetShortDescription("generates the stamp for the specific environment").
 		SetDescription("This command generates the a stamp for the specific environment").
 		AddFlag("environment", fmt.Sprintf("indicates the environment the stamp is to be generated.\noptions: %o", gitOpts), commando.String, "github").
 		SetAction(options.MakeStamp(gitEnvironments))
+
+	commando.Register("set-stamped-version").
+		SetShortDescription("updates the version for the specified and attach's the stamp").
+		SetDescription("updates the version for the specified and attach's the stamp").
+		AddFlag("value", "indicates the version that should override the version file version.", commando.String, "1.0.0").
+		AddFlag("environment", fmt.Sprintf("indicates the environment the stamp is to be generated.\noptions: %o", gitOpts), commando.String, "github").
+		AddArgument("runtime", fmt.Sprintf("indicates the type of object that will be updated.\noptions: %s", managerOpts), "").
+		AddArgument("object", fmt.Sprintf("indicates the type of object that will be updated.\noptions: %s", typeOpts), "").
+		AddArgument("file", "indicates the version file path", "").
+		SetAction(options.SetVersion(managers, true, map[string]interface{}{
+			"types":        typeOpts,
+			"managers":     managerOpts,
+			"environments": gitEnvironments,
+		}))
 
 	// parse command-line arguments
 	commando.Parse(nil)

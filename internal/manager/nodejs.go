@@ -3,17 +3,18 @@ package manager
 import (
 	"encoding/json"
 	"errors"
+	"github.com/tidwall/sjson"
 	"io/ioutil"
 )
 
-type NodeJS struct {
+type Nodejs struct {
 }
 
-func (instance NodeJS) GetSupportTypes() []string {
+func (instance Nodejs) GetSupportTypes() []string {
 	return []string{"version"}
 }
 
-func (instance NodeJS) GetVersion(object string, filename string) (string, error) {
+func (instance Nodejs) GetVersion(object string, filename string) (string, error) {
 
 	if object != "version" {
 		return "", errors.New("object[name='" + object + "'] isn't supported")
@@ -25,7 +26,7 @@ func (instance NodeJS) GetVersion(object string, filename string) (string, error
 		return "", err
 	}
 
-	m := make(map[interface{}]interface{})
+	m := make(map[string]interface{})
 
 	err = json.Unmarshal(binary, &m)
 
@@ -46,7 +47,7 @@ func (instance NodeJS) GetVersion(object string, filename string) (string, error
 	return v, nil
 }
 
-func (instance NodeJS) SetVersion(object string, filename string, value string) error {
+func (instance Nodejs) SetVersion(object string, filename string, value string) error {
 
 	if object != "version" {
 		return errors.New("object[name='" + object + "'] isn't supported")
@@ -58,23 +59,13 @@ func (instance NodeJS) SetVersion(object string, filename string, value string) 
 		return err
 	}
 
-	m := make(map[interface{}]interface{})
-
-	err = json.Unmarshal(binary, &m)
+	v, err := sjson.Set(string(binary), "version", value)
 
 	if err != nil {
 		return err
 	}
 
-	m[object] = value
-
-	binary, err = json.Marshal(m)
-
-	if err != nil {
-		return err
-	}
-
-	err = ioutil.WriteFile(filename, binary, 0644)
+	err = ioutil.WriteFile(filename, []byte(v), 0644)
 
 	if err != nil {
 		return err

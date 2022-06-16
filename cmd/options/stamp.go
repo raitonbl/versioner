@@ -12,62 +12,72 @@ import (
 
 func MakeStamp(cache map[string]pkg.GitEnvironment) func(map[string]commando.ArgValue, map[string]commando.FlagValue) {
 	return func(args map[string]commando.ArgValue, flags map[string]commando.FlagValue) {
-		environment, _ := flags["environment"].GetString()
 
-		var env pkg.GitEnvironment = nil
+		v, err := getStamp(cache, flags)
 
-		for _, current := range cache {
-			if current.IsSupported(environment) {
-				env = current
-				break
-			}
+		if err != nil {
+			common.Exit(err)
 		}
 
-		if env == nil {
-			common.Exit(errors.New("environment[" + environment + "] isn't supported"))
-		}
-
-		branchName := ""
-		stamp := "SNAPSHOT"
-
-		isPush, problem := env.IsTriggeredByPush()
-
-		if problem != nil {
-			common.Exit(problem)
-		}
-
-		isPullRequest, problem := env.IsTriggeredByPullRequest()
-
-		if problem != nil {
-			common.Exit(problem)
-		}
-
-		if isPush || isPullRequest {
-			b, prob := env.GetTargetBranch()
-
-			if prob != nil {
-				common.Exit(prob)
-			}
-
-			if isPush && (strings.HasPrefix(branchName, "release/") || strings.HasPrefix(branchName, "hotfix/")) {
-				stamp = "PRERELEASE"
-			}
-
-			branchName = b
-		}
-
-		if isPush && branchName == env.GetDefaultBranch() {
-			fmt.Println("RELEASE")
-			os.Exit(0)
-		}
-
-		pipelineId, prob := env.GetPipeline()
-
-		if prob != nil {
-			common.Exit(prob)
-		}
-
-		fmt.Println(pipelineId + "-" + stamp)
+		fmt.Println(v)
 		os.Exit(0)
 	}
+}
+
+func getStamp(cache map[string]pkg.GitEnvironment, flags map[string]commando.FlagValue) (string, error) {
+	environment, _ := flags["environment"].GetString()
+
+	var env pkg.GitEnvironment = nil
+
+	for _, current := range cache {
+		if current.IsSupported(environment) {
+			env = current
+			break
+		}
+	}
+
+	if env == nil {
+		return "", errors.New("environment[" + environment + "] isn't supported")
+	}
+
+	branchName := ""
+	stamp := "SNAPSHOT"
+
+	isPush, problem := env.IsTriggeredByPush()
+
+	if problem != nil {
+		return "", problem
+	}
+
+	isPullRequest, problem := env.IsTriggeredByPullRequest()
+
+	if problem != nil {
+		return "", problem
+	}
+
+	if isPush || isPullRequest {
+		b, prob := env.GetTargetBranch()
+
+		if prob != nil {
+			return "", prob
+		}
+
+		if isPush && (strings.HasPrefix(branchName, "release/") || strings.HasPrefix(branchName, "hotfix/")) {
+			stamp = "PRERELEASE"
+		}
+
+		branchName = b
+	}
+
+	if isPush && branchName == env.GetDefaultBranch() {
+		return "RELEASE", nil
+	}
+
+	pipelineId, prob := env.GetPipeline()
+
+	if prob != nil {
+		return "", prob
+	}
+
+	return pipelineId + "-" + stamp, nil
 }

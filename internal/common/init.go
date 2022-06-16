@@ -7,7 +7,10 @@ import (
 )
 
 var managers = map[string]pkg.Manager{
-	"maven": manager.Maven{},
+	"oas3":   manager.OAS3{},
+	"helm":   manager.Helm{},
+	"maven":  manager.Maven{},
+	"nodejs": manager.Nodejs{},
 }
 var environments = map[string]pkg.GitEnvironment{
 	"github": environment.Github{},

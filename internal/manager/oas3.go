@@ -25,25 +25,24 @@ func (instance OAS3) GetVersion(object string, filename string) (string, error) 
 		return "", err
 	}
 
-	m := make(map[interface{}]interface{})
-
+	m := yaml.MapSlice{}
 	err = yaml.Unmarshal(binary, &m)
 
 	if err != nil {
 		return "", err
 	}
 
-	v, isString := m[object].(string)
-
-	if !isString {
-		return "", errors.New("cannot read object[name='" + object + "'] from file[name='" + filename + "']")
+	for _, each := range m {
+		if each.Key == "info" {
+			for _, s := range each.Value.(yaml.MapSlice) {
+				if s.Key == "version" {
+					return s.Value.(string), nil
+				}
+			}
+		}
 	}
 
-	if v == "" {
-		return "1.0.0", nil
-	}
-
-	return v, nil
+	return "1.0.0", nil
 }
 
 func (instance OAS3) SetVersion(object string, filename string, value string) error {
@@ -58,15 +57,46 @@ func (instance OAS3) SetVersion(object string, filename string, value string) er
 		return err
 	}
 
-	m := make(map[interface{}]interface{})
-
+	m := yaml.MapSlice{}
 	err = yaml.Unmarshal(binary, &m)
 
 	if err != nil {
 		return err
 	}
 
-	m[object] = value
+	infoIndex := -1
+	var infoObject yaml.MapSlice
+
+	for index, each := range m {
+		if each.Key == "info" {
+			infoIndex = index
+			infoObject = each.Value.(yaml.MapSlice)
+		}
+	}
+
+	if infoObject == nil {
+		infoObject = make([]yaml.MapItem, 0)
+	}
+
+	isAssigned := false
+
+	for index, item := range infoObject {
+		if item.Key == "version" {
+			infoObject[index] = yaml.MapItem{Key: "version", Value: value}
+			isAssigned = true
+			break
+		}
+	}
+
+	if !isAssigned {
+		infoObject = append(infoObject, yaml.MapItem{Key: "version", Value: value})
+	}
+
+	if infoIndex == -1 {
+		m = append(m, yaml.MapItem{Key: "info", Value: infoObject})
+	} else {
+		m[infoIndex] = yaml.MapItem{Key: "info", Value: infoObject}
+	}
 
 	binary, err = yaml.Marshal(m)
 

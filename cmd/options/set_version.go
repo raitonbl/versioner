@@ -9,7 +9,7 @@ import (
 	"os"
 )
 
-func SetVersion(s map[string]pkg.Manager, opts map[string]interface{}) func(map[string]commando.ArgValue, map[string]commando.FlagValue) {
+func SetVersion(s map[string]pkg.Manager, isStampAware bool, opts map[string]interface{}) func(map[string]commando.ArgValue, map[string]commando.FlagValue) {
 	return func(args map[string]commando.ArgValue, flags map[string]commando.FlagValue) {
 
 		file := args["file"].Value
@@ -40,7 +40,19 @@ func SetVersion(s map[string]pkg.Manager, opts map[string]interface{}) func(map[
 			common.Exit(errors.New(file + " doesn't exist or cannot be opened"))
 		}
 
-		err := m.SetVersion(object, file, value)
+		v := value
+
+		if isStampAware {
+			stamp, err := getStamp(opts["environments"].(map[string]pkg.GitEnvironment), flags)
+
+			if err != nil {
+				common.Exit(err)
+			}
+
+			v = v + "-" + stamp
+		}
+
+		err := m.SetVersion(object, file, v)
 
 		if err != nil {
 			common.Exit(err)

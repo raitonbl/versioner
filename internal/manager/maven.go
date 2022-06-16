@@ -88,7 +88,7 @@ func setVersion(data []byte, value string) (string, error) {
 		vNode = nil
 	}
 
-	src, err := xmlquery.Parse(strings.NewReader(fmt.Sprintf("<version>%s.yaml</version>", value)))
+	src, err := xmlquery.Parse(strings.NewReader(fmt.Sprintf("<version>%s</version>", value)))
 
 	if err != nil {
 		return "", err
