@@ -3,7 +3,7 @@ package options
 import (
 	"errors"
 	"fmt"
-	"github.com/raitonbl/versioner/internal/commons"
+	"github.com/raitonbl/versioner/internal/common"
 	"github.com/raitonbl/versioner/pkg"
 	"github.com/thatisuday/commando"
 	"os"
@@ -24,7 +24,7 @@ func MakeStamp(cache map[string]pkg.GitEnvironment) func(map[string]commando.Arg
 		}
 
 		if env == nil {
-			commons.Exit(errors.New("environment[" + environment + "] isn't supported"))
+			common.Exit(errors.New("environment[" + environment + "] isn't supported"))
 		}
 
 		branchName := ""
@@ -33,20 +33,20 @@ func MakeStamp(cache map[string]pkg.GitEnvironment) func(map[string]commando.Arg
 		isPush, problem := env.IsTriggeredByPush()
 
 		if problem != nil {
-			commons.Exit(problem)
+			common.Exit(problem)
 		}
 
 		isPullRequest, problem := env.IsTriggeredByPullRequest()
 
 		if problem != nil {
-			commons.Exit(problem)
+			common.Exit(problem)
 		}
 
 		if isPush || isPullRequest {
 			b, prob := env.GetTargetBranch()
 
 			if prob != nil {
-				commons.Exit(prob)
+				common.Exit(prob)
 			}
 
 			if isPush && (strings.HasPrefix(branchName, "release/") || strings.HasPrefix(branchName, "hotfix/")) {
@@ -64,7 +64,7 @@ func MakeStamp(cache map[string]pkg.GitEnvironment) func(map[string]commando.Arg
 		pipelineId, prob := env.GetPipeline()
 
 		if prob != nil {
-			commons.Exit(prob)
+			common.Exit(prob)
 		}
 
 		fmt.Println(pipelineId + "-" + stamp)

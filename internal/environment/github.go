@@ -1,4 +1,4 @@
-package environments
+package environment
 
 import (
 	"errors"

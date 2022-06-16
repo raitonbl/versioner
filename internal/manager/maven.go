@@ -1,7 +1,8 @@
-package managers
+package manager
 
 import (
 	"encoding/xml"
+	"errors"
 	"fmt"
 	"github.com/antchfx/xmlquery"
 	"github.com/creekorful/mvnparser"
@@ -12,14 +13,19 @@ import (
 type Maven struct {
 }
 
-func (object Maven) IsSupported(value string) bool {
-	return value == "maven"
+func (instance Maven) GetSupportTypes() []string {
+	return []string{"version"}
 }
 
-func (object Maven) ReadVersion(value string) (string, error) {
+func (instance Maven) GetVersion(object string, filename string) (string, error) {
+
+	if object != "version" {
+		return "", errors.New("object[name='" + object + "'] isn't supported")
+	}
+
 	var project mvnparser.MavenProject
 
-	container, err := ioutil.ReadFile(value)
+	container, err := ioutil.ReadFile(filename)
 
 	if err != nil {
 		return "", err
@@ -32,14 +38,15 @@ func (object Maven) ReadVersion(value string) (string, error) {
 	return project.Version, nil
 }
 
-func (object Maven) GetVersionFile() string {
-	return "pom.xml"
-}
+func (instance Maven) SetVersion(object string, filename string, value string) error {
 
-func (object Maven) EditVersion(path string, newValue string) error {
+	if object != "version" {
+		return errors.New("object[name='" + object + "'] isn't supported")
+	}
+
 	var project mvnparser.MavenProject
 
-	container, ex := ioutil.ReadFile(path)
+	container, ex := ioutil.ReadFile(filename)
 
 	if ex != nil {
 		return ex
@@ -49,15 +56,15 @@ func (object Maven) EditVersion(path string, newValue string) error {
 		return err
 	}
 
-	content, ex := ioutil.ReadFile(path)
+	content, ex := ioutil.ReadFile(filename)
 
-	file, err := setVersion(content, newValue)
+	file, err := setVersion(content, value)
 
 	if err != nil {
 		return err
 	}
 
-	err = ioutil.WriteFile(path, []byte(file), 0644)
+	err = ioutil.WriteFile(filename, []byte(file), 0644)
 
 	if err != nil {
 		return ex
