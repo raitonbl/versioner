@@ -1,6 +1,7 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"github.com/raitonbl/versioner/cmd/options"
 	"github.com/raitonbl/versioner/internal"
@@ -8,10 +9,13 @@ import (
 	"github.com/thoas/go-funk"
 )
 
+//go:embed .version
+var version string
+
 func main() {
 	builder := internal.Builder{}
 
-	commando.SetExecutableName("versioner").SetVersion("2.0.0").
+	commando.SetExecutableName("versioner").SetVersion(version).
 		SetDescription("allows to read or modify version on source code")
 
 	keys := funk.Keys(builder.GetReaders())
