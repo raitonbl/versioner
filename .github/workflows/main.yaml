@@ -1,4 +1,4 @@
-name: GENERATE RELEASE
+name: BUILD & PUBLISH
 on:
   push:
     branches:
@@ -6,6 +6,12 @@ on:
   pull_request:
     branches:
       - '*'
+  workflow_dispatch:
+    input:
+      LOG_LEVEL:
+        description: 'Determines the LOG_LEVEL'
+        type: environment
+        required: false
 
 jobs:
   unit_testing:
