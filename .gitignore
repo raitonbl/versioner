@@ -339,5 +339,6 @@ test.sh
 .script
 versioner
 go.sum
+main.go
 
 # End of https://www.toptal.com/developers/gitignore/api/intellij+iml,intellij+all,intellij,maven,java,code-java,java-web,linux,windows,macos
