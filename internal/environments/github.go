@@ -9,7 +9,11 @@ import (
 type Github struct {
 }
 
-func (g Github) GetPipeline() (string, error) {
+func (instance Github) GetDefaultBranch() string {
+	return "main"
+}
+
+func (instance Github) GetPipeline() (string, error) {
 
 	githubRunId := os.Getenv("GITHUB_RUN_ID")
 
@@ -26,9 +30,44 @@ func (g Github) GetPipeline() (string, error) {
 	return githubRunId + "." + githubRunNumber, nil
 }
 
-func (g Github) GetTargetBranch() (string, error) {
+func (instance Github) IsSupported(value string) bool {
+	return value == "github"
+}
 
-	isValid, err := g.IsTriggeredByPush()
+func (instance Github) GetSourceBranch() (string, error) {
+	isPR, err := instance.IsTriggeredByPullRequest()
+
+	if err != nil {
+		return "", err
+	}
+
+	if !isPR {
+		return "", errors.New("GITHUB_HEAD_REF not available")
+	}
+
+	githubHeadRef := os.Getenv("GITHUB_HEAD_REF")
+
+	if githubHeadRef == "" {
+		return "", errors.New("GITHUB_HEAD_REF not available")
+	}
+
+	return githubHeadRef, nil
+
+}
+
+func (instance Github) IsTriggeredByPush() (bool, error) {
+	githubRef := os.Getenv("GITHUB_REF")
+
+	if githubRef == "" {
+		return false, errors.New("GITHUB_REF not available")
+	}
+
+	return strings.HasPrefix(githubRef, "refs/heads/"), nil
+}
+
+func (instance Github) GetTargetBranch() (string, error) {
+
+	isValid, err := instance.IsTriggeredByPush()
 
 	if err != nil {
 		return "", err
@@ -36,7 +75,7 @@ func (g Github) GetTargetBranch() (string, error) {
 
 	if !isValid {
 
-		isValid, err = g.IsTriggeredByPullRequest()
+		isValid, err = instance.IsTriggeredByPullRequest()
 
 		if err != nil {
 			return "", err
@@ -57,21 +96,7 @@ func (g Github) GetTargetBranch() (string, error) {
 	return githubRefName, nil
 }
 
-func (g Github) IsSupported(value string) bool {
-	return value == "github"
-}
-
-func (g Github) IsTriggeredByPush() (bool, error) {
-	githubRef := os.Getenv("GITHUB_REF")
-
-	if githubRef == "" {
-		return false, errors.New("GITHUB_REF not available")
-	}
-
-	return strings.HasPrefix(githubRef, "refs/heads/"), nil
-}
-
-func (g Github) IsTriggeredByPullRequest() (bool, error) {
+func (instance Github) IsTriggeredByPullRequest() (bool, error) {
 	githubRef := os.Getenv("GITHUB_REF")
 
 	if githubRef == "" {
@@ -79,35 +104,4 @@ func (g Github) IsTriggeredByPullRequest() (bool, error) {
 	}
 
 	return strings.HasPrefix(githubRef, "refs/pull/"), nil
-}
-
-func (g Github) GetSourceBranch() (string, error) {
-	isPR, err := g.IsTriggeredByPullRequest()
-
-	if err != nil {
-		return "", err
-	}
-
-	if !isPR {
-		return "", errors.New("GITHUB_HEAD_REF not available")
-	}
-
-	githubHeadRef := os.Getenv("GITHUB_HEAD_REF")
-
-	if githubHeadRef == "" {
-		return "", errors.New("GITHUB_HEAD_REF not available")
-	}
-
-	return githubHeadRef, nil
-
-}
-
-func (g Github) IsTriggeredByTag() (bool, error) {
-	githubRef := os.Getenv("GITHUB_REF")
-
-	if githubRef == "" {
-		return false, errors.New("GITHUB_REF not available")
-	}
-
-	return strings.HasPrefix(githubRef, "refs/tags/"), nil
 }

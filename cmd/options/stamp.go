@@ -29,58 +29,45 @@ func MakeStamp(cache map[string]pkg.GitEnvironment) func(map[string]commando.Arg
 
 		branchName := ""
 		stamp := "SNAPSHOT"
-		addPipelineId := true
 
-		isTag, err := env.IsTriggeredByTag()
+		isPush, problem := env.IsTriggeredByPush()
 
-		if err != nil {
-			commons.Exit(err)
+		if problem != nil {
+			commons.Exit(problem)
 		}
 
-		if isTag {
-			stamp = "RELEASE"
-			addPipelineId = false
-		} else {
+		isPullRequest, problem := env.IsTriggeredByPullRequest()
 
-			isPush, pr := env.IsTriggeredByPush()
-
-			if pr != nil {
-				commons.Exit(pr)
-			}
-
-			isPullRequest, pr := env.IsTriggeredByPullRequest()
-
-			if pr != nil {
-				commons.Exit(pr)
-			}
-
-			if isPush || isPullRequest {
-				b, prob := env.GetTargetBranch()
-
-				if prob != nil {
-					commons.Exit(prob)
-				}
-
-				if isPush && (strings.HasPrefix(branchName, "release/") || strings.HasPrefix(branchName, "hotfix/")) {
-					stamp = "PRERELEASE"
-				}
-
-				branchName = b
-			}
+		if problem != nil {
+			commons.Exit(problem)
 		}
 
-		if addPipelineId {
-			pipelineId, prob := env.GetPipeline()
+		if isPush || isPullRequest {
+			b, prob := env.GetTargetBranch()
 
 			if prob != nil {
 				commons.Exit(prob)
 			}
 
-			fmt.Println(pipelineId + "-" + stamp)
-		} else {
-			fmt.Println(stamp)
+			if isPush && (strings.HasPrefix(branchName, "release/") || strings.HasPrefix(branchName, "hotfix/")) {
+				stamp = "PRERELEASE"
+			}
+
+			branchName = b
 		}
 
+		if isPush && branchName == env.GetDefaultBranch() {
+			fmt.Println("RELEASE")
+			os.Exit(0)
+		}
+
+		pipelineId, prob := env.GetPipeline()
+
+		if prob != nil {
+			commons.Exit(prob)
+		}
+
+		fmt.Println(pipelineId + "-" + stamp)
 		os.Exit(0)
 	}
 }
