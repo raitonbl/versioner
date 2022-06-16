@@ -9,7 +9,7 @@ import (
 	"github.com/thoas/go-funk"
 )
 
-//go:embed .version
+//go:embed version
 var version string
 
 func main() {

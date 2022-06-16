@@ -39,10 +39,10 @@ jobs:
         name: Download dependencies
       - name: Create dist directory
         run: mkdir dist
-      - run:  echo $VERSION > cmd/.version
+      - run:  echo $VERSION > cmd/version
         name: Update version file
-      - name: Copy cmd/.version into dist directory
-        run: sudo mv cmd/.version dist/.version
+      - name: Copy cmd/version into dist directory
+        run: sudo mv cmd/version dist/version
       - run:  go build cmd/main.go
         name: Build application
       - name: Move application into dist directory
@@ -70,7 +70,7 @@ jobs:
           name: dist
           path: dist
       - name: Export VERSION environment variable
-        run:  export VERSION=$(cat dist/.version)
+        run:  export VERSION=$(cat dist/version)
       - name: Upload application into S3
         uses: medlypharmacy/s3-artifacts-action@master
         with:
