@@ -39,7 +39,7 @@ jobs:
         name: Download dependencies
       - name: Create dist directory
         run: mkdir dist
-      - run:  cat $VERSION > cmd/.version
+      - run:  echo $VERSION > cmd/.version
         name: Update version file
       - name: Copy cmd/.version into dist directory
         run: sudo mv cmd/.version dist/.version
