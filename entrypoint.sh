@@ -8,4 +8,6 @@ mv versioner /usr/local/bin/versioner
 
 ARGS="versioner $2 $3 $4 $5 $6"
 
+cd /github/workspace
+
 eval "$ARGS"
