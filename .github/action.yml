@@ -1,0 +1,24 @@
+name: 'RaitonBL.com Versioner'
+description: 'RaitonBL.com Versioner Github action'
+inputs:
+  command:
+    description: 'The command in the CLI application'
+    required: true
+  runtime:
+    description: 'The runtime argument in the CLI application'
+    required: true
+  object:
+    description: 'The object argument in the CLI application'
+    required: true
+  file:
+    description: 'The file argument in the CLI application'
+    required: true
+  version:
+    description: 'The CLI application version'
+    required: false
+    default: "2.0.0-RELEASE"
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.version }} ${{ inputs.command }} ${{ inputs.runtime }} ${{ inputs.object }} ${{ inputs.file }}
