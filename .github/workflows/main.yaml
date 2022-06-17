@@ -33,7 +33,7 @@ jobs:
     needs:
       - unit_testing
     env:
-      VERSION: 2.0.0
+      VERSION: 2.1.0
     steps:
       - uses: actions/checkout@v3
         name: Git Checkout
@@ -66,7 +66,7 @@ jobs:
     needs:
       - build
     env:
-      VERSION: 2.0.0
+      VERSION: 2.1.0
     steps:
       - uses: actions/checkout@v3
         name: Git Checkout
