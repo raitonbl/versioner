@@ -13,7 +13,7 @@ CLI application that reads and/or edits version from specific types of source co
 
 ```yaml
 
-- uses: raitonbl/versioner
+- uses: raitonbl/versioner@v2.1.1
   with:
     command: get
     runtime: helm
@@ -25,7 +25,7 @@ CLI application that reads and/or edits version from specific types of source co
 
 ```yaml
 
-- uses: raitonbl/versioner
+- uses: raitonbl/versioner@v2.1.1
   with:
     command: set
     runtime: helm
@@ -37,7 +37,7 @@ CLI application that reads and/or edits version from specific types of source co
 
 ```yaml
 
-- uses: raitonbl/versioner
+- uses: raitonbl/versioner@v2.1.1
   with:
     command: set-stamped-version
     runtime: helm
