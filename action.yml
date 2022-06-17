@@ -1,5 +1,8 @@
 name: 'RaitonBL.com Versioner'
 description: 'RaitonBL.com Versioner Github action'
+branding:
+  icon: box
+  color: red
 inputs:
   command:
     description: 'The command in the CLI application'
