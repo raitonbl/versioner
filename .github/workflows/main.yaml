@@ -102,7 +102,6 @@ jobs:
   publish-image:
     needs:
       - build
-      - publish
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
@@ -133,4 +132,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: raitonbl/versioner:ubuntu-$VERSION-RELEASE
+          tags: raitonbl/versioner:ubuntu-${env.VERSION}-RELEASE
