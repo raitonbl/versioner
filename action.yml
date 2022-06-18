@@ -23,4 +23,8 @@ runs:
   using: 'docker'
   image: '.github/Dockerfile'
   args:
-    - ${{ inputs.command }} ${{ inputs.runtime }} ${{ inputs.object }} ${{ inputs.file }} ${{ inputs.value }}
+    - ${{ inputs.command }}
+    - ${{ inputs.runtime }}
+    - ${{ inputs.object }}
+    - ${{ inputs.file }}
+    - ${{ inputs.value }}
