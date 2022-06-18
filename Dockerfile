@@ -1,3 +1,4 @@
-FROM alpine/curl:latest
-COPY entrypoint.sh /entrypoint.sh
-ENTRYPOINT ["/entrypoint.sh"]
+FROM ubuntu:latest
+ADD dist/versioner /usr/local/bin/versioner
+RUN chmod a+x versioner
+ENTRYPOINT ["versioner $VERSIONER_ARGS"]
