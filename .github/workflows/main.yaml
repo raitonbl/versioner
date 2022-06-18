@@ -61,7 +61,7 @@ jobs:
           path: ./dist
           retention-days: 0
 
-  publish:
+  publish-binary:
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs:
@@ -132,4 +132,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: raitonbl/versioner:ubuntu-${env.VERSION}-RELEASE
+          tags: "raitonbl/versioner:ubuntu-${{env.VERSION}}-RELEASE"
