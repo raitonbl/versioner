@@ -17,16 +17,7 @@ func SetVersion(s map[string]pkg.Manager, isStampAware bool, opts map[string]int
 		runtime := args["runtime"].Value
 		value, _ := flags["value"].GetString()
 
-		var m pkg.Manager = nil
-
-		for _, current := range s {
-			t := s[runtime]
-
-			if t != nil {
-				m = current
-				break
-			}
-		}
+		m := s[runtime]
 
 		if m == nil {
 			common.Exit(errors.New("runtime[name='" + runtime + "'] isn't supported"))

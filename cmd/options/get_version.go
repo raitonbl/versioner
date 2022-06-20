@@ -17,16 +17,7 @@ func GetVersion(s map[string]pkg.Manager, _ map[string]interface{}) func(map[str
 		object := args["object"].Value
 		runtime := args["runtime"].Value
 
-		var m pkg.Manager = nil
-
-		for _, current := range s {
-			t := s[runtime]
-
-			if t != nil {
-				m = current
-				break
-			}
-		}
+		m := s[runtime]
 
 		if m == nil {
 			common.Exit(errors.New("runtime[name='" + runtime + "'] isn't supported"))

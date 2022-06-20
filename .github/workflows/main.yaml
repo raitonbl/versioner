@@ -8,7 +8,7 @@ on:
       - '*'
 
 env:
-    VERSION: 2.2.5
+    VERSION: 2.2.6
 
 jobs:
   unit_testing:
@@ -87,6 +87,12 @@ jobs:
           aws_access_key_id: ${{ secrets.AWS_KEY_ID }}
           aws_s3_bucket_name: ${{ secrets.AWS_BUCKET }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      - name: Get URL
+        env:
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          BUCKET_NAME: ${{ secrets.AWS_BUCKET }}
+        run: https://s3.$AWS_REGION.amazonaws.com/$AWS_BUCKET/public/versioner/$VERSION-RELEASE/versioner
+
       - name: Upload README.md into S3
         uses: medlypharmacy/s3-artifacts-action@master
         with:
