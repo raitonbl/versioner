@@ -15,9 +15,17 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+      - name: set-tag
+        run: export PACKAGE_TAG=SNAPSHOT
+      - name: set-release-tag
+        run: export PACKAGE_TAG=RELEASE
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      - name: set-pre-release-tag
+        run: export PACKAGE_TAG=PRERELEASE
+        if: github.event_name == 'push' && startsWith(github.ref ,'refs/heads/release/')
       - id: get_version
         name: Read Version
-        run: echo "version=$(jq -r '.version' package.json)-SNAPSHOT.$GITHUB_RUN_NUMBER" >> "$GITHUB_OUTPUT"
+        run: echo "version=$(jq -r '.version' package.json)-$PACKAGE_TAG.$GITHUB_RUN_NUMBER" >> "$GITHUB_OUTPUT"
 
   unit_testing:
     runs-on: ubuntu-latest
@@ -76,15 +84,10 @@ jobs:
       - build
       - version
     runs-on: ubuntu-latest
-    #  if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      - uses: actions/download-artifact@master
-        name: Download  dist directory
-        with:
-          name: dist
-          path: dist
       - name: Build Docker image
         uses: docker/build-push-action@v4
         with:
