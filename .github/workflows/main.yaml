@@ -15,17 +15,19 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      - name: set-tag
+      - name: set version tag
         run: echo "PACKAGE_TAG=SNAPSHOT" >> $GITHUB_ENV
-      - name: set-tag
+      - name: set package build
+        run: echo "PACKAGE_BUILD=+$GITHUB_RUN_ID.$GITHUB_RUN_NUMBER" >> $GITHUB_ENV
+      - name: set version tag
         run: echo "PACKAGE_TAG=RELEASE" >> $GITHUB_ENV
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-      - name: set-tag
+      - name: set version tag
         run:  echo "PACKAGE_TAG=PRE-RELEASE" >> $GITHUB_ENV
         if: github.event_name == 'push' && startsWith(github.ref ,'refs/heads/release/')
       - id: get_version
         name: Read Version
-        run: echo "version=$(jq -r '.version' package.json)-$PACKAGE_TAG.$GITHUB_RUN_NUMBER" >> "$GITHUB_OUTPUT"
+        run: echo "version=$(jq -r '.version' package.json)-$PACKAGE_TAG$PACKAGE_BUILD" >> "$GITHUB_OUTPUT"
   unit_testing:
     runs-on: ubuntu-latest
     steps:
@@ -100,21 +102,13 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Push Docker image to dockerhub
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          push: true
-          tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/versioner:${{ needs.version.outputs.version }}
-            ${{ secrets.DOCKERHUB_USERNAME }}/versioner:latest
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v2
         with:
-            registry: ghcr.io
-            username: ${{ github.repository_owner }}
-            password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Push Docker image to github
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Push Docker image
         uses: docker/build-push-action@v4
         with:
           context: .

@@ -51,7 +51,7 @@ func getStamp(cache map[string]pkg.GitEnvironment, flags map[string]commando.Fla
 	}
 	if isPush {
 		if strings.HasPrefix(branchName, "release/") || strings.HasPrefix(branchName, "hotfix/") {
-			stamp = "PRERELEASE"
+			stamp = "PRE-RELEASE"
 		} else if branchName == targetEnvironment.GetDefaultBranch() {
 			return "RELEASE", nil
 		}
