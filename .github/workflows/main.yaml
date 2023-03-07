@@ -17,17 +17,18 @@ jobs:
         uses: actions/checkout@v3
       - name: set version tag
         run: echo "PACKAGE_TAG=SNAPSHOT" >> $GITHUB_ENV
-      - name: set package build
-        run: echo "PACKAGE_BUILD=+$GITHUB_RUN_ID.$GITHUB_RUN_NUMBER" >> $GITHUB_ENV
       - name: set version tag
         run: echo "PACKAGE_TAG=RELEASE" >> $GITHUB_ENV
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
       - name: set version tag
         run:  echo "PACKAGE_TAG=PRE-RELEASE" >> $GITHUB_ENV
         if: github.event_name == 'push' && startsWith(github.ref ,'refs/heads/release/')
+      - name: set version tag
+        run: echo "PACKAGE_TAG=$PACKAGE_TAG.$GITHUB_RUN_ID.$GITHUB_RUN_NUMBER" >> $GITHUB_ENV
+        if: github.event_name != 'push' || github.ref != 'refs/heads/main'
       - id: get_version
         name: Read Version
-        run: echo "version=$(jq -r '.version' package.json)-$PACKAGE_TAG$PACKAGE_BUILD" >> "$GITHUB_OUTPUT"
+        run: echo "version=$(jq -r '.version' package.json)-$PACKAGE_TAG" >> "$GITHUB_OUTPUT"
   unit_testing:
     runs-on: ubuntu-latest
     steps:
