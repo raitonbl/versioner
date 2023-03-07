@@ -1,4 +1,4 @@
-package common
+package internal
 
 import (
 	"github.com/raitonbl/versioner/internal/environment"
@@ -6,7 +6,7 @@ import (
 	"github.com/raitonbl/versioner/pkg"
 )
 
-var managers = map[string]pkg.Manager{
+var managers = map[string]pkg.PackageManager{
 	"oas3":   manager.OAS3{},
 	"helm":   manager.Helm{},
 	"maven":  manager.Maven{},
@@ -16,7 +16,7 @@ var environments = map[string]pkg.GitEnvironment{
 	"github": environment.Github{},
 }
 
-func GetManagers() map[string]pkg.Manager {
+func GetManagers() map[string]pkg.PackageManager {
 	return managers
 }
 

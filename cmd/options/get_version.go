@@ -10,7 +10,7 @@ import (
 	"os"
 )
 
-func GetVersion(s map[string]pkg.Manager, _ map[string]interface{}) func(map[string]commando.ArgValue, map[string]commando.FlagValue) {
+func GetVersion(s map[string]pkg.PackageManager, _ map[string]interface{}) func(map[string]commando.ArgValue, map[string]commando.FlagValue) {
 	return func(args map[string]commando.ArgValue, flags map[string]commando.FlagValue) {
 
 		file := args["file"].Value
@@ -20,21 +20,21 @@ func GetVersion(s map[string]pkg.Manager, _ map[string]interface{}) func(map[str
 		m := s[runtime]
 
 		if m == nil {
-			common.Exit(errors.New("runtime[name='" + runtime + "'] isn't supported"))
+			common.DoExit(errors.New("runtime[name='" + runtime + "'] isn't supported"))
 		}
 
 		if !funk.Contains(m.GetSupportTypes(), object) {
-			common.Exit(errors.New("runtime[name='" + runtime + "'] doesn't support object[name='" + object + "']"))
+			common.DoExit(errors.New("runtime[name='" + runtime + "'] doesn't support object[name='" + object + "']"))
 		}
 
 		if _, err := os.Stat(file); os.IsNotExist(err) {
-			common.Exit(errors.New(file + " doesn't exist or cannot be opened"))
+			common.DoExit(errors.New(file + " doesn't exist or cannot be opened"))
 		}
 
 		v, err := m.GetVersion(object, file)
 
 		if err != nil {
-			common.Exit(err)
+			common.DoExit(err)
 		}
 
 		fmt.Println(v)

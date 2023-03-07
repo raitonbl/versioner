@@ -5,7 +5,7 @@ import (
 	"os"
 )
 
-func Exit(err error) {
+func DoExit(err error) {
 	fmt.Println(err)
 	os.Exit(402)
 }
