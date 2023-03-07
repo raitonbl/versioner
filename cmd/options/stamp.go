@@ -65,5 +65,5 @@ func getStamp(cache map[string]pkg.GitEnvironment, flags map[string]commando.Fla
 		return "", prob
 	}
 
-	return fmt.Sprintf("%s+%s", stamp, pipelineId), nil
+	return fmt.Sprintf("%s.%s", stamp, pipelineId), nil
 }
