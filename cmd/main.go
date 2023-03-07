@@ -30,7 +30,7 @@ func main() {
 	commando.Register("set").
 		SetShortDescription("updates the version for version file").
 		SetDescription("This command updates the version file on a specific version file").
-		AddFlag("value", "indicates the version that should override the version file version.", commando.String, "1.0.0").
+		AddFlag("version", "indicates the version that should override the version file version.", commando.String, "1.0.0").
 		AddArgument("runtime", fmt.Sprintf("indicates the type of object that will be updated.\noptions: %s", managerOpts), "").
 		AddArgument("object", fmt.Sprintf("indicates the type of object that will be updated.\noptions: %s", typeOpts), "").
 		AddArgument("file", "indicates the version file path", "").
@@ -46,12 +46,24 @@ func main() {
 	commando.Register("set-stamped-version").
 		SetShortDescription("updates the version for the specified and attach's the stamp").
 		SetDescription("updates the version for the specified and attach's the stamp").
-		AddFlag("value", "indicates the version that should override the version file version.", commando.String, "1.0.0").
+		AddFlag("version", "indicates the version that should override the version file version.", commando.String, "1.0.0").
 		AddFlag("environment", fmt.Sprintf("indicates the environment the stamp is to be generated.\noptions: %o", gitOpts), commando.String, "github").
 		AddArgument("runtime", fmt.Sprintf("indicates the type of object that will be updated.\noptions: %s", managerOpts), "").
 		AddArgument("object", fmt.Sprintf("indicates the type of object that will be updated.\noptions: %s", typeOpts), "").
 		AddArgument("file", "indicates the version file path", "").
 		SetAction(options.SetVersion(packageManagers, true, map[string]interface{}{
+			"types":        typeOpts,
+			"managers":     managerOpts,
+			"environments": gitEnvironments,
+		}))
+	commando.Register("get-stamped-version").
+		SetShortDescription("updates the version for the specified and attach's the stamp").
+		SetDescription("updates the version for the specified and attach's the stamp").
+		AddFlag("environment", fmt.Sprintf("indicates the environment the stamp is to be generated.\noptions: %o", gitOpts), commando.String, "github").
+		AddArgument("runtime", fmt.Sprintf("indicates the type of object that will be updated.\noptions: %s", managerOpts), "").
+		AddArgument("object", fmt.Sprintf("indicates the type of object that will be updated.\noptions: %s", typeOpts), "").
+		AddArgument("file", "indicates the version file path", "").
+		SetAction(options.GetStampedVersion(gitEnvironments, packageManagers, map[string]interface{}{
 			"types":        typeOpts,
 			"managers":     managerOpts,
 			"environments": gitEnvironments,
