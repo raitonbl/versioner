@@ -71,19 +71,20 @@ jobs:
           name: dist
           path: ./dist
           retention-days: 0
-  build-image:
+  push:
     needs:
       - build
       - version
     runs-on: ubuntu-latest
+    #  if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
       - uses: actions/download-artifact@master
         name: Download  dist directory
         with:
-            name: dist
-            path: dist
+          name: dist
+          path: dist
       - name: Build Docker image
         uses: docker/build-push-action@v4
         with:
@@ -92,15 +93,6 @@ jobs:
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/versioner:ubuntu-${{ needs.version.outputs.version }}
             ${{ secrets.DOCKERHUB_USERNAME }}/versioner:ubuntu-latest
-  push:
-    needs:
-      - version
-      - build-image
-    runs-on: ubuntu-latest
-    #  if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
       - name: Login to Docker registry
         uses: docker/login-action@v2
         with:
