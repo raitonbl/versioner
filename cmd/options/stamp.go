@@ -16,7 +16,7 @@ func MakeStamp(cache map[string]pkg.GitEnvironment) func(map[string]commando.Arg
 		v, err := getStamp(cache, flags)
 
 		if err != nil {
-			common.Exit(err)
+			common.DoExit(err)
 		}
 
 		fmt.Println(v)
@@ -27,57 +27,43 @@ func MakeStamp(cache map[string]pkg.GitEnvironment) func(map[string]commando.Arg
 func getStamp(cache map[string]pkg.GitEnvironment, flags map[string]commando.FlagValue) (string, error) {
 	environment, _ := flags["environment"].GetString()
 
-	var env pkg.GitEnvironment = nil
+	var targetEnvironment pkg.GitEnvironment = nil
 
 	for _, current := range cache {
-		if current.IsSupported(environment) {
-			env = current
+		if current.GetType() == environment {
+			targetEnvironment = current
 			break
 		}
 	}
 
-	if env == nil {
+	if targetEnvironment == nil {
 		return "", errors.New("environment[" + environment + "] isn't supported")
 	}
 
-	branchName := ""
-	stamp := "SNAPSHOT"
-
-	isPush, problem := env.IsTriggeredByPush()
-
+	stamp := ""
+	branchName, problem := targetEnvironment.GetBranch()
 	if problem != nil {
 		return "", problem
 	}
-
-	isPullRequest, problem := env.IsTriggeredByPullRequest()
-
+	isPush, problem := targetEnvironment.IsPushEvent()
 	if problem != nil {
 		return "", problem
 	}
-
-	if isPush || isPullRequest {
-		b, prob := env.GetTargetBranch()
-
-		if prob != nil {
-			return "", prob
+	if isPush {
+		if strings.HasPrefix(branchName, "release/") || strings.HasPrefix(branchName, "hotfix/") {
+			stamp = "PRE-RELEASE"
+		} else if branchName == targetEnvironment.GetDefaultBranch() {
+			return "RELEASE", nil
 		}
-
-		if isPush && (strings.HasPrefix(branchName, "release/") || strings.HasPrefix(branchName, "hotfix/")) {
-			stamp = "PRERELEASE"
-		}
-
-		branchName = b
+	} else {
+		stamp = "SNAPSHOT"
 	}
 
-	if isPush && branchName == env.GetDefaultBranch() {
-		return "RELEASE", nil
-	}
-
-	pipelineId, prob := env.GetPipeline()
+	pipelineId, prob := targetEnvironment.GetPipelineId()
 
 	if prob != nil {
 		return "", prob
 	}
 
-	return pipelineId + "-" + stamp, nil
+	return fmt.Sprintf("%s.%s", stamp, pipelineId), nil
 }

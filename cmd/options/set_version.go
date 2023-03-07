@@ -9,26 +9,30 @@ import (
 	"os"
 )
 
-func SetVersion(s map[string]pkg.Manager, isStampAware bool, opts map[string]interface{}) func(map[string]commando.ArgValue, map[string]commando.FlagValue) {
+func SetVersion(s map[string]pkg.PackageManager, isStampAware bool, opts map[string]interface{}) func(map[string]commando.ArgValue, map[string]commando.FlagValue) {
 	return func(args map[string]commando.ArgValue, flags map[string]commando.FlagValue) {
 
 		file := args["file"].Value
 		object := args["object"].Value
 		runtime := args["runtime"].Value
-		value, _ := flags["value"].GetString()
+		value, problem := flags["version"].GetString()
+
+		if problem != nil {
+			common.DoExit(problem)
+		}
 
 		m := s[runtime]
 
 		if m == nil {
-			common.Exit(errors.New("runtime[name='" + runtime + "'] isn't supported"))
+			common.DoExit(errors.New("runtime[name='" + runtime + "'] isn't supported"))
 		}
 
 		if !funk.Contains(m.GetSupportTypes(), object) {
-			common.Exit(errors.New("runtime[name='" + runtime + "'] doesn't support object[name='" + object + "']"))
+			common.DoExit(errors.New("runtime[name='" + runtime + "'] doesn't support object[name='" + object + "']"))
 		}
 
 		if _, err := os.Stat(file); os.IsNotExist(err) {
-			common.Exit(errors.New(file + " doesn't exist or cannot be opened"))
+			common.DoExit(errors.New(file + " doesn't exist or cannot be opened"))
 		}
 
 		v := value
@@ -37,7 +41,7 @@ func SetVersion(s map[string]pkg.Manager, isStampAware bool, opts map[string]int
 			stamp, err := getStamp(opts["environments"].(map[string]pkg.GitEnvironment), flags)
 
 			if err != nil {
-				common.Exit(err)
+				common.DoExit(err)
 			}
 
 			v = v + "-" + stamp
@@ -46,7 +50,7 @@ func SetVersion(s map[string]pkg.Manager, isStampAware bool, opts map[string]int
 		err := m.SetVersion(object, file, v)
 
 		if err != nil {
-			common.Exit(err)
+			common.DoExit(err)
 		}
 
 		os.Exit(0)
