@@ -40,7 +40,7 @@ func getStamp(cache map[string]pkg.GitEnvironment, flags map[string]commando.Fla
 		return "", errors.New("environment[" + environment + "] isn't supported")
 	}
 
-	stamp := ""
+	stamp := "SNAPSHOT"
 	branchName, problem := targetEnvironment.GetBranch()
 	if problem != nil {
 		return "", problem
@@ -55,8 +55,6 @@ func getStamp(cache map[string]pkg.GitEnvironment, flags map[string]commando.Fla
 		} else if branchName == targetEnvironment.GetDefaultBranch() {
 			return "RELEASE", nil
 		}
-	} else {
-		stamp = "SNAPSHOT"
 	}
 
 	pipelineId, prob := targetEnvironment.GetPipelineId()
