@@ -40,10 +40,6 @@ func (instance Github) GetBranch() (string, error) {
 		return "", errors.New("GITHUB_REF not available")
 	}
 	return srcBranch, nil
-	}
-
-	return srcBranch, nil
-
 }
 
 func (instance Github) IsPushEvent() (bool, error) {
