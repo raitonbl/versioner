@@ -35,24 +35,11 @@ func (instance Github) GetPipelineId() (string, error) {
 }
 
 func (instance Github) GetBranch() (string, error) {
-	isPR, err := instance.IsPullRequestEvent()
-
-	if err != nil {
-		return "", err
-	}
-
-	if !isPR {
+	srcBranch := os.Getenv("GITHUB_REF")
+	if srcBranch == "" {
 		return "", errors.New("GITHUB_REF not available")
 	}
-
-	githubHeadRef := os.Getenv("GITHUB_REF")
-
-	if githubHeadRef == "" {
-		return "", errors.New("GITHUB_REF not available")
-	}
-
-	return githubHeadRef, nil
-
+	return srcBranch, nil
 }
 
 func (instance Github) IsPushEvent() (bool, error) {
