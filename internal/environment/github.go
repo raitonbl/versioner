@@ -35,11 +35,11 @@ func (instance Github) GetPipelineId() (string, error) {
 }
 
 func (instance Github) GetBranch() (string, error) {
-
 	srcBranch := os.Getenv("GITHUB_REF")
-
 	if srcBranch == "" {
 		return "", errors.New("GITHUB_REF not available")
+	}
+	return srcBranch, nil
 	}
 
 	return srcBranch, nil
