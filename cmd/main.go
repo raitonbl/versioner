@@ -15,7 +15,7 @@ func main() {
 	gitEnvironments := internal.GetEnvironments()
 	gitOpts := funk.Keys(gitEnvironments)
 	typeOpts, managerOpts := getManagerOptions(packageManagers)
-	commando.SetExecutableName("versioner").SetVersion("3.0.0").
+	commando.SetExecutableName("versioner").SetVersion("3.0.1").
 		SetDescription("allows to read or modify version on source code")
 	commando.Register("get").
 		SetShortDescription("reads version from version file").

@@ -42,13 +42,13 @@ func (instance Github) GetBranch() (string, error) {
 	}
 
 	if !isPR {
-		return "", errors.New("GITHUB_HEAD_REF not available")
+		return "", errors.New("GITHUB_REF not available")
 	}
 
-	githubHeadRef := os.Getenv("GITHUB_HEAD_REF")
+	githubHeadRef := os.Getenv("GITHUB_REF")
 
 	if githubHeadRef == "" {
-		return "", errors.New("GITHUB_HEAD_REF not available")
+		return "", errors.New("GITHUB_REF not available")
 	}
 
 	return githubHeadRef, nil
