@@ -1,4 +1,3 @@
-runs-on: self-hosted
 name: PACK & PUBLISH
 on:
   push:
@@ -10,7 +9,7 @@ on:
 jobs:
   # Get version
   version:
-    runs-on: ubuntu-latest
+    runs-on:  ubuntu-latest
     outputs:
       version: ${{ steps.get_version.outputs.version }}
     steps:
@@ -31,7 +30,7 @@ jobs:
         name: Read Version
         run: echo "version=$(jq -r '.version' package.json)-$PACKAGE_TAG" >> "$GITHUB_OUTPUT"
   unit_testing:
-    runs-on: ubuntu-latest
+    runs-on:   ubuntu-latest
     steps:
       - uses: actions/checkout@v3
         name: Git Checkout
@@ -58,7 +57,7 @@ jobs:
           path: coverage.html
           retention-days: 1
   build:
-    runs-on: ubuntu-latest
+    runs-on:   ubuntu-latest
     needs:
       - unit_testing
     steps:
@@ -86,7 +85,7 @@ jobs:
     needs:
       - build
       - version
-    runs-on: ubuntu-latest
+    runs-on:   ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
