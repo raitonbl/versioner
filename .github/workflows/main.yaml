@@ -9,7 +9,7 @@ on:
 jobs:
   # Get version
   version:
-    runs-on: self-hosted
+    runs-on:  [self-hosted, Linux, X64]
     outputs:
       version: ${{ steps.get_version.outputs.version }}
     steps:
@@ -30,7 +30,7 @@ jobs:
         name: Read Version
         run: echo "version=$(jq -r '.version' package.json)-$PACKAGE_TAG" >> "$GITHUB_OUTPUT"
   unit_testing:
-    runs-on: self-hosted
+    runs-on:  [self-hosted, Linux, X64]
     steps:
       - uses: actions/checkout@v3
         name: Git Checkout
@@ -57,7 +57,7 @@ jobs:
           path: coverage.html
           retention-days: 1
   build:
-    runs-on: self-hosted
+    runs-on:  [self-hosted, Linux, X64]
     needs:
       - unit_testing
     steps:
@@ -85,7 +85,7 @@ jobs:
     needs:
       - build
       - version
-    runs-on: self-hosted
+    runs-on:  [self-hosted, Linux, X64]
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
